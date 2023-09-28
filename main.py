@@ -1,4 +1,4 @@
-import os
+import os, shutil
 import requests
 from PyPDF2 import PdfFileReader
 from pdf2image import convert_from_path
@@ -7,6 +7,31 @@ from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 from datetime import datetime
 
+def delete_files():
+    # Verifica si el archivo "urls/urls_path.txt" existe antes de intentar eliminarlo
+    urls_file = "urls/urls_path.txt"
+    if os.path.exists(urls_file):
+        os.remove(urls_file)
+        print(f"El archivo {urls_file} ha sido eliminado.")
+    else:
+        print(f"El archivo {urls_file} no existe.")
+    
+    # Verifica si la carpeta "pdfs" existe antes de intentar eliminarla
+    pdfs_folder = "pdfs"
+    if os.path.exists(pdfs_folder):
+        shutil.rmtree(pdfs_folder)
+        print(f"La carpeta {pdfs_folder} y su contenido han sido eliminados.")
+    else:
+        print(f"La carpeta {pdfs_folder} no existe.")
+    
+    # Verifica si la carpeta "snapshots" existe antes de intentar eliminarla
+    snapshots_folder = "snapshots"
+    if os.path.exists(snapshots_folder):
+        shutil.rmtree(snapshots_folder)
+        print(f"La carpeta {snapshots_folder} y su contenido han sido eliminados.")
+    else:
+        print(f"La carpeta {snapshots_folder} no existe.")
+        
 def convert_pdfs_to_images():
     # Nombre del archivo que contiene las URL y rutas de los PDFs
     url_path_file = "urls/urls_path.txt"
@@ -51,10 +76,10 @@ def convert_pdfs_to_images():
     with open(url_path_file, "w") as url_path:
         url_path.writelines(updated_lines)
         
-
 def combine_images_to_pdf():
-    # Carpeta donde están las imágenes
+    # Carpeta donde quieres guardar las capturas
     snapshot_folder = "snapshots"
+    os.makedirs(snapshot_folder, exist_ok=True)
     
     # Obtiene el nombre del mes actual
     current_month = datetime.now().strftime("%B")
@@ -85,6 +110,9 @@ def combine_images_to_pdf():
     print(f"Se ha creado el archivo PDF combinado como {output_pdf}")
 
 def download_pdfs_from_urls(txt_file):
+    # Carpeta que contiene los PDFs
+    pdf_folder = "pdfs"
+    os.makedirs(pdf_folder, exist_ok=True)
     # Ruta completa al archivo que contendrá las URL y rutas de los PDFs descargados
     url_path_file = os.path.join("urls", "urls_path.txt")
 
@@ -111,13 +139,9 @@ def download_pdfs_from_urls(txt_file):
         else:
             print(f"No se pudo descargar el PDF desde {url}")
 
-# Carpeta que contiene los PDFs
-pdf_folder = "pdfs"
-os.makedirs(pdf_folder, exist_ok=True)
-# Carpeta donde quieres guardar las capturas
-snapshot_folder = "snapshots"
-os.makedirs(snapshot_folder, exist_ok=True)
 
+# Limpieza de Carpetas y Archivos Temporales
+delete_files()
 # Llama a la función y proporciona la ruta completa al archivo TXT en la carpeta "urls"
 download_pdfs_from_urls(os.path.join("urls", "urls.txt"))
 convert_pdfs_to_images()
