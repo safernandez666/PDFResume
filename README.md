@@ -17,7 +17,7 @@ Asegúrate de tener instalados los siguientes requisitos:
 1. Clona este repositorio en tu máquina local:
 
    ```bash
-   git clone https://github.com/tu-usuario/tu-proyecto.git
+   git clone https://github.com/safernandez666/PDFResume.git
 
 2. Instala las dependencias: 
 
