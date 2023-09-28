@@ -30,7 +30,9 @@ def combine_images_to_pdf():
     current_month = datetime.now().strftime("%B")
     
     # Nombre del archivo PDF de salida con el nombre del mes
-    output_pdf = f"{current_month}_capturas.pdf"
+    output_folder = "reports"
+    os.makedirs(output_folder, exist_ok=True)
+    output_pdf = os.path.join(output_folder, f"{current_month}_capturas.pdf")
     
     # Lista de rutas de las imágenes
     image_paths = []
