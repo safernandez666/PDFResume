@@ -24,7 +24,9 @@ Asegúrate de tener instalados los siguientes requisitos:
    ```bash
    pip3 install -r requirements.txt
 
-3. Corre el programa:
+3. Rellena con los link, de los PDF, en el archivo /urls/urls.txt 
+
+4. Corre el programa:
 
    ```bash
    python3 main.py
