@@ -133,7 +133,7 @@ def create_report():
     for line in lines:
         parts = line.strip().split(" ; ")
         if len(parts) == 3:
-            link = parts[1]  # Segunda posición contiene el enlace
+            link = parts[0]  # Segunda posición contiene el enlace
             image_path = parts[2]  # Tercera posición contiene la ruta de la imagen
             if os.path.exists(image_path) and image_path.endswith(".png"):
                 c.setFont("Helvetica", 12)
