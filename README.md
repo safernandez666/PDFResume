@@ -1,6 +1,6 @@
 # PDF Resume
 
-Itera en los PDFs para sacar un Screenshot y pegarlos en un reporte Mensual.
+Itera en los PDFs para sacar un Screenshot y pegarlos en un reporte mensual junto con su link.
 
 ## Instalación
 
@@ -35,3 +35,5 @@ Asegúrate de tener instalados los siguientes requisitos:
 
    ```bash
    python3 main.py
+
+6. Revisar los reportes, generados, en /reports/MES_capturas.pdf
