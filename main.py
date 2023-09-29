@@ -2,10 +2,18 @@ import os, shutil
 import requests
 from PyPDF2 import PdfFileReader
 from pdf2image import convert_from_path
-from PIL import Image
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
+from PIL import Image as PILImage
+from fpdf import FPDF
 from datetime import datetime
+
+# Definir el ancho y alto de la página en pulgadas
+page_width = 8.5  # Ancho de página de carta
+page_height = 11  # Alto de página de carta
+
+# Crear una instancia de FPDF con el tamaño de página personalizado
+pdf = FPDF(format=(page_width, page_height))
 
 def delete_files():
     # Verifica si el archivo "urls/urls_path.txt" existe antes de intentar eliminarlo
@@ -31,7 +39,7 @@ def delete_files():
         print(f"La carpeta {snapshots_folder} y su contenido han sido eliminados.")
     else:
         print(f"La carpeta {snapshots_folder} no existe.")
-        
+
 def convert_pdfs_to_images():
     # Nombre del archivo que contiene las URL y rutas de los PDFs
     url_path_file = "urls/urls_path.txt"
@@ -76,39 +84,6 @@ def convert_pdfs_to_images():
     with open(url_path_file, "w") as url_path:
         url_path.writelines(updated_lines)
         
-def combine_images_to_pdf():
-    # Carpeta donde quieres guardar las capturas
-    snapshot_folder = "snapshots"
-    os.makedirs(snapshot_folder, exist_ok=True)
-    
-    # Obtiene el nombre del mes actual
-    current_month = datetime.now().strftime("%B")
-    
-    # Nombre del archivo PDF de salida con el nombre del mes
-    output_folder = "reports"
-    os.makedirs(output_folder, exist_ok=True)
-    output_pdf = os.path.join(output_folder, f"{current_month}_capturas.pdf")
-    
-    # Lista de rutas de las imágenes
-    image_paths = []
-    
-    # Recorre la carpeta y agrega las imágenes a la lista
-    for filename in os.listdir(snapshot_folder):
-        if filename.endswith(".png"):
-            image_path = os.path.join(snapshot_folder, filename)
-            image_paths.append(image_path)
-    
-    # Crea el PDF combinando las imágenes
-    c = canvas.Canvas(output_pdf, pagesize=letter)
-    
-    for img_path in image_paths:
-        c.drawImage(img_path, 0, 0, width=letter[0], height=letter[1])
-        c.showPage()
-    
-    c.save()
-    
-    print(f"Se ha creado el archivo PDF combinado como {output_pdf}")
-
 def download_pdfs_from_urls(txt_file):
     # Carpeta que contiene los PDFs
     pdf_folder = "pdfs"
@@ -139,9 +114,40 @@ def download_pdfs_from_urls(txt_file):
         else:
             print(f"No se pudo descargar el PDF desde {url}")
 
+def create_report():
+    # Obtén el nombre del mes actual
+    current_month = datetime.now().strftime("%B")
+
+    # Nombre del archivo PDF de salida con el nombre del mes y ubicación en la carpeta "reports"
+    output_folder = "reports"
+    os.makedirs(output_folder, exist_ok=True)
+    output_pdf = os.path.join(output_folder, f"{current_month}_capturas.pdf")
+
+    # Abre el file "urls_path.txt" en la subcarpeta "urls" para leer las rutas de las imágenes y los enlaces
+    with open("urls/urls_path.txt", "r") as file:
+        lines = file.readlines()
+
+    # Crea el PDF combinando las imágenes y los enlaces
+    c = canvas.Canvas(output_pdf, pagesize=letter)
+
+    for line in lines:
+        parts = line.strip().split(" ; ")
+        if len(parts) == 3:
+            link = parts[1]  # Segunda posición contiene el enlace
+            image_path = parts[2]  # Tercera posición contiene la ruta de la imagen
+            if os.path.exists(image_path) and image_path.endswith(".png"):
+                c.setFont("Helvetica", 12)
+                c.drawString(10, 750, f"Enlace: {link}")
+                c.drawImage(image_path, 10, 100, width=letter[0] - 20, height=650)
+                c.showPage()
+
+    c.save()
+
+    print(f"Se ha creado el archivo PDF combinado como {output_pdf} en la carpeta 'reports'.")
 
 # Limpieza de Carpetas y Archivos Temporales
 delete_files()
 # Llama a la función y proporciona la ruta completa al archivo TXT en la carpeta "urls"
 download_pdfs_from_urls(os.path.join("urls", "urls.txt"))
 convert_pdfs_to_images()
+create_report()
