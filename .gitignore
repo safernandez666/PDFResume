@@ -2,3 +2,4 @@ snapshots/
 pdfs/
 reports/
 urls/urls_path.txt
+.env

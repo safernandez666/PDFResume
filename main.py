@@ -7,13 +7,14 @@ from reportlab.pdfgen import canvas
 from PIL import Image as PILImage
 from fpdf import FPDF
 from datetime import datetime
+from pyshorteners import Shortener
+from decouple import config
 
-# Definir el ancho y alto de la página en pulgadas
-page_width = 8.5  # Ancho de página de carta
-page_height = 11  # Alto de página de carta
+TOKEN = config('TOKEN')
 
-# Crear una instancia de FPDF con el tamaño de página personalizado
-pdf = FPDF(format=(page_width, page_height))
+def shorten_url_with_tinyurl(long_url):
+    shortener = Shortener()
+    return shortener.tinyurl.short(long_url)
 
 def delete_files():
     # Verifica si el archivo "urls/urls_path.txt" existe antes de intentar eliminarlo
@@ -133,7 +134,7 @@ def create_report():
     for line in lines:
         parts = line.strip().split(" ; ")
         if len(parts) == 3:
-            link = parts[0]  # Segunda posición contiene el enlace
+            link = shorten_url_with_tinyurl(parts[0])  # Segunda posición contiene el enlace
             image_path = parts[2]  # Tercera posición contiene la ruta de la imagen
             if os.path.exists(image_path) and image_path.endswith(".png"):
                 c.setFont("Helvetica", 12)

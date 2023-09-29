@@ -26,7 +26,12 @@ Asegúrate de tener instalados los siguientes requisitos:
 
 3. Rellena con los link, de los PDF, en el archivo /urls/urls.txt 
 
-4. Corre el programa:
+4. Generar un Token en [TinyURL](https://tinyurl.com/), para acortar las URLs en el reporte. El mismo debe cargarse en .env
+
+   ```bash
+   TOKEN=TUTOKEN
+
+5. Corre el programa:
 
    ```bash
    python3 main.py
